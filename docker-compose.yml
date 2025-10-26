@@ -1,0 +1,25 @@
+version: "3.8"
+
+services:
+  web:
+    image: python:3.11-slim
+    volumes:
+      - ./:/usr/src/app
+    working_dir: /usr/src/app
+    environment:
+      - MONGO_URL=mongodb://mongo_db:27017
+      - DB_NAME=academy_db
+    ports:
+      - "8000:8000"
+    command: bash -c "pip install -r requirements.txt && uvicorn src.app:app --host 0.0.0.0 --port 8000 --reload"
+    depends_on:
+      - mongo_db
+
+  mongo_db:
+    image: mongo:5
+    environment:
+      - MONGO_DATA_DIR=/data/db
+    volumes:
+      - ./data:/data/db
+    ports:
+      - "7000:27017"
